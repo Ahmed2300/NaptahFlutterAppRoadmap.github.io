@@ -30,7 +30,7 @@
                     <div class="date">Sat, Oct 17</div>
                     <div class="task" data-task-id="scan-state"><strong>Ahmed:</strong> Scan Feature State Management</div>
                     <div class="task" data-task-id="auth-service"><strong>Mohamed:</strong> Auth Service & State Management</div>
-                    <div class="task" data-task-id="marketplace-service"><strong>Manar & Mohamed:</strong> Marketplace Service Layer</div>
+                    <div class="task" data-task-id="marketplace-service"><strong>Mohamed:</strong> Marketplace Service Layer</div>
                 </div>
                 <div class="day-column">
                     <div class="date">Sun, Oct 18</div>
@@ -971,54 +971,493 @@ class WelcomeScreen extends ConsumerWidget {
 
     <!-- MANAR & MOHAMED'S TASKS -->
     <div id="marketplace-service-guide" class="modal"><div class="modal-content"><span class="close-btn">&times;</span>
-        <h2>Marketplace Service Layer Guide</h2>
-        <p><strong>Assignee:</strong> Mohamed</p>
-        <p><strong>Goal:</strong> Create a service to handle all communication with Firebase for marketplace features.</p>
-        <h4>Packages:</h4><ul><li>`cloud_firestore` or `firebase_database`</li></ul>
-        <h4>Steps:</h4><ol><li>Create `marketplace_service.dart`.</li><li>Implement `getProducts()`, `searchProducts(String query)`, `getCart()`, `addToCart(String productId)`, `removeFromCart(String cartItemId)`, and `createOrder()`.</li></ol>
+        <h2>🛒 Marketplace Service Layer Guide</h2>
+        <p><strong>Assignee:</strong> Mohamed | <strong>Estimated Time:</strong> 6-8 hours | <strong>Day:</strong> Saturday, Oct 17</p>
+        <h3>🎯 Goal</h3>
+        <p>Create a comprehensive service layer to handle all Firebase communication for marketplace features (products, cart, orders).</p>
+        
+        <h3>📦 Required Packages</h3>
+        <ul>
+            <li>cloud_firestore: ^4.13.6 (or firebase_database if using RTDB)</li>
+            <li>Built-in: dart:async</li>
+        </ul>
+        
+        <h3>📋 Implementation Steps</h3>
+        <ol>
+            <li><strong>Create marketplace_service.dart</strong> in <code>lib/data/services/</code></li>
+            <li><strong>Implement Product Methods:</strong>
+                <ul>
+                    <li><code>Future&lt;List&lt;Product&gt;&gt; getProducts({String? category})</code> - Fetch all/filtered products</li>
+                    <li><code>Future&lt;List&lt;Product&gt;&gt; searchProducts(String query)</code> - Search by name/description</li>
+                    <li><code>Future&lt;Product&gt; getProductById(String productId)</code> - Get single product details</li>
+                </ul>
+            </li>
+            <li><strong>Implement Cart Methods:</strong>
+                <ul>
+                    <li><code>Future&lt;Cart&gt; getCart(String userId)</code> - Fetch user's cart</li>
+                    <li><code>Future&lt;void&gt; addToCart(String userId, String productId, int quantity)</code> - Add item</li>
+                    <li><code>Future&lt;void&gt; updateCartItem(String userId, String cartItemId, int quantity)</code> - Update quantity</li>
+                    <li><code>Future&lt;void&gt; removeFromCart(String userId, String cartItemId)</code> - Remove item</li>
+                    <li><code>Future&lt;void&gt; clearCart(String userId)</code> - Clear all items</li>
+                </ul>
+            </li>
+            <li><strong>Implement Order Methods:</strong>
+                <ul>
+                    <li><code>Future&lt;Order&gt; createOrder(String userId, OrderDetails details)</code> - Create new order</li>
+                    <li><code>Future&lt;List&lt;Order&gt;&gt; getUserOrders(String userId)</code> - Fetch order history</li>
+                </ul>
+            </li>
+        </ol>
+        
+        <h3>📊 Firebase Schema Reference</h3>
+        <p><strong>Use existing Firebase schema from web app:</strong></p>
+        <ul>
+            <li><strong>Products Collection:</strong> /products/{productId}</li>
+            <li><strong>Carts Collection:</strong> /carts/{userId}/items/{cartItemId}</li>
+            <li><strong>Orders Collection:</strong> /orders/{orderId}</li>
+        </ul>
+        <p><em>Note: Reference the web app's Firebase structure for exact field names and data types.</em></p>
+        
+        <h3>📚 Web App Reference</h3>
+        <ul>
+            <li>File: <code>src/components/Marketplace.tsx</code></li>
+            <li>Review existing product fetching logic and data structure</li>
+        </ul>
+        
+        <h3>✅ Testing Checklist</h3>
+        <ul>
+            <li>✓ Products load successfully from Firebase</li>
+            <li>✓ Search returns filtered results</li>
+            <li>✓ Cart operations (add/update/remove) work correctly</li>
+            <li>✓ Cart persists across app restarts</li>
+            <li>✓ Orders are created with all required fields</li>
+            <li>✓ Error handling for network failures</li>
+        </ul>
+        
+        <h3>🔗 Dependencies</h3>
+        <p><strong>Required before starting:</strong> Firebase configured, Product data models defined</p>
+        <p><strong>Blocks:</strong> Marketplace UI implementation, Cart UI</p>
     </div></div>
     <div id="marketplace-main-ui-guide" class="modal"><div class="modal-content"><span class="close-btn">&times;</span>
-        <h2>Marketplace Main UI Guide</h2>
-        <p><strong>Assignee:</strong> Manar</p>
-        <p><strong>Goal:</strong> Build the main marketplace screen UI based on the Figma design.</p>
-        <h4>Steps:</h4><ol><li>Create `marketplace_screen.dart`.</li><li>Implement the header, search bar, filter/sort options, category sidebar, and view toggle.</li></ol>
+        <h2>🏪 Marketplace Main UI Guide</h2>
+        <p><strong>Assignee:</strong> Manar | <strong>Estimated Time:</strong> 6-8 hours | <strong>Day:</strong> Sunday, Oct 18</p>
+        <h3>🎯 Goal</h3>
+        <p>Build the main marketplace screen UI with product browsing, search, filtering, and view options.</p>
+        
+        <h3>📋 Implementation Steps</h3>
+        <ol>
+            <li><strong>Create marketplace_screen.dart</strong> in <code>lib/presentation/screens/</code></li>
+            <li><strong>Implement Header Section:</strong>
+                <ul>
+                    <li>App bar with title "Marketplace"</li>
+                    <li>Cart icon button with badge counter</li>
+                </ul>
+            </li>
+            <li><strong>Add Search Bar:</strong>
+                <ul>
+                    <li>TextField with search icon</li>
+                    <li>Debounced search (300ms delay)</li>
+                    <li>Clear button when text is entered</li>
+                </ul>
+            </li>
+            <li><strong>Implement Filter/Sort Options:</strong>
+                <ul>
+                    <li>Horizontal filter chips (All, Seeds, Fertilizers, Tools, Treatments)</li>
+                    <li>Sort dropdown (Price: Low to High, Price: High to Low, Popular, New)</li>
+                </ul>
+            </li>
+            <li><strong>Add View Toggle:</strong>
+                <ul>
+                    <li>Icon buttons to switch between Grid and List views</li>
+                    <li>Persist selected view preference</li>
+                </ul>
+            </li>
+            <li><strong>Implement Product Grid/List:</strong>
+                <ul>
+                    <li>GridView.builder for grid view (2 columns)</li>
+                    <li>ListView.builder for list view</li>
+                    <li>Use ProductCard widget for each item</li>
+                    <li>Pull-to-refresh functionality</li>
+                </ul>
+            </li>
+        </ol>
+        
+        <h3>🎨 UI Elements</h3>
+        <ul>
+            <li><strong>Search Bar:</strong> Outlined text field with search icon</li>
+            <li><strong>Category Filters:</strong> Horizontal scrollable chips</li>
+            <li><strong>Grid/List Toggle:</strong> Icon buttons (grid_view / list icons)</li>
+            <li><strong>Product Grid:</strong> 2-column grid with spacing</li>
+            <li><strong>Empty State:</strong> "No products found" message with illustration</li>
+            <li><strong>Loading State:</strong> Shimmer effect or circular progress indicator</li>
+        </ul>
+        
+        <h3>✅ Testing Checklist</h3>
+        <ul>
+            <li>✓ UI matches Figma design</li>
+            <li>✓ Search bar filters products correctly</li>
+            <li>✓ Category filters work</li>
+            <li>✓ Sort options reorder products</li>
+            <li>✓ Grid/List toggle switches views smoothly</li>
+            <li>✓ Pull-to-refresh reloads products</li>
+            <li>✓ Responsive on different screen sizes</li>
+        </ul>
+        
+        <h3>🔗 Dependencies</h3>
+        <p><strong>Required before starting:</strong> Marketplace Service implemented by Mohamed</p>
+        <p><strong>Blocks:</strong> Product Card Widget, State Integration</p>
     </div></div>
     <div id="product-card-widget-guide" class="modal"><div class="modal-content"><span class="close-btn">&times;</span>
-        <h2>Product Card Widget Guide</h2>
-        <p><strong>Assignee:</strong> Manar</p>
-        <p><strong>Goal:</strong> Create a reusable widget for displaying a single product.</p>
-        <h4>Steps:</h4><ol><li>Create `product_card.dart`.</li><li>Display all product information based on the Figma design.</li><li>Ensure the widget can adapt for both grid and list views.</li></ol>
+        <h2>🏷️ Product Card Widget Guide</h2>
+        <p><strong>Assignee:</strong> Manar | <strong>Estimated Time:</strong> 3-4 hours | <strong>Day:</strong> Monday, Oct 19</p>
+        <h3>🎯 Goal</h3>
+        <p>Create a reusable widget for displaying a single product that works in both grid and list views.</p>
+        
+        <h3>📋 Implementation Steps</h3>
+        <ol>
+            <li><strong>Create product_card.dart</strong> in <code>lib/presentation/widgets/</code></li>
+            <li><strong>Add Constructor Parameters:</strong>
+                <ul>
+                    <li>Product product (required)</li>
+                    <li>bool isGridView (default: true)</li>
+                    <li>VoidCallback? onTap</li>
+                    <li>VoidCallback? onAddToCart</li>
+                </ul>
+            </li>
+            <li><strong>Implement Grid View Layout:</strong>
+                <ul>
+                    <li>Product image (with cached network image)</li>
+                    <li>Product name (2 lines max, ellipsis)</li>
+                    <li>Price and rating</li>
+                    <li>"Add to Cart" icon button</li>
+                    <li>"Out of Stock" badge if applicable</li>
+                </ul>
+            </li>
+            <li><strong>Implement List View Layout:</strong>
+                <ul>
+                    <li>Horizontal layout with image on left</li>
+                    <li>Product details on right</li>
+                    <li>More description text visible</li>
+                </ul>
+            </li>
+        </ol>
+        
+        <h3>🎨 Card Elements</h3>
+        <ul>
+            <li><strong>Image:</strong> AspectRatio 1:1 with placeholder</li>
+            <li><strong>Name:</strong> Text with maxLines: 2, overflow: ellipsis</li>
+            <li><strong>Price:</strong> Bold, colored text</li>
+            <li><strong>Rating:</strong> Star icons + average rating</li>
+            <li><strong>Add Button:</strong> IconButton with shopping_cart icon</li>
+            <li><strong>Stock Badge:</strong> Red badge with "Out of Stock" text</li>
+        </ul>
+        
+        <h3>✅ Testing Checklist</h3>
+        <ul>
+            <li>✓ Card displays correctly in grid view</li>
+            <li>✓ Card displays correctly in list view</li>
+            <li>✓ Images load with placeholder</li>
+            <li>✓ "Add to Cart" button triggers callback</li>
+            <li>✓ Out of stock items show badge</li>
+            <li>✓ Tap navigates to product details</li>
+        </ul>
     </div></div>
     <div id="marketplace-state-guide" class="modal"><div class="modal-content"><span class="close-btn">&times;</span>
-        <h2>Marketplace State & UI Integration Guide</h2>
-        <p><strong>Assignees:</strong> Manar & Mohamed</p>
-        <p><strong>Goal:</strong> Connect the UI to the service layer and manage the screen's state.</p>
-        <h4>Steps:</h4><ol><li><strong>(Mohamed)</strong> Create a BLoC/Notifier to manage the marketplace state.</li><li><strong>(Manar)</strong> Connect the UI widgets to the state management solution.</li><li><strong>(Mohamed)</strong> Implement the `onPressed` logic for the "Add to Cart" button.</li></ol>
+        <h2>🔄 Marketplace State & UI Integration Guide</h2>
+        <p><strong>Assignees:</strong> Mohamed & Manar | <strong>Estimated Time:</strong> 4-5 hours | <strong>Day:</strong> Tuesday, Oct 20</p>
+        <h3>🎯 Goal</h3>
+        <p>Connect the marketplace UI to the service layer and manage screen state effectively.</p>
+        
+        <h3>📋 Implementation Steps</h3>
+        <ol>
+            <li><strong>(Mohamed) Create MarketplaceBLoC/Notifier:</strong>
+                <ul>
+                    <li>Define states: initial, loading, loaded, loadingMore, error</li>
+                    <li>Implement fetchProducts() method</li>
+                    <li>Implement searchProducts(String query) method</li>
+                    <li>Implement filterByCategory(String category) method</li>
+                    <li>Implement sortProducts(SortOption option) method</li>
+                </ul>
+            </li>
+            <li><strong>(Manar) Connect UI to State:</strong>
+                <ul>
+                    <li>Wrap MarketplaceScreen with BlocBuilder/Consumer</li>
+                    <li>Show loading indicator for loading state</li>
+                    <li>Display products for loaded state</li>
+                    <li>Show error message for error state</li>
+                    <li>Connect search bar to searchProducts()</li>
+                    <li>Connect filter chips to filterByCategory()</li>
+                </ul>
+            </li>
+            <li><strong>(Mohamed) Implement Add to Cart Logic:</strong>
+                <ul>
+                    <li>In ProductCard's onAddToCart callback</li>
+                    <li>Call MarketplaceService.addToCart()</li>
+                    <li>Show success snackbar</li>
+                    <li>Update cart badge counter</li>
+                </ul>
+            </li>
+        </ol>
+        
+        <h3>🎨 State Management</h3>
+        <ul>
+            <li><strong>initial:</strong> Empty state before data fetch</li>
+            <li><strong>loading:</strong> First time loading products</li>
+            <li><strong>loaded:</strong> Products successfully loaded</li>
+            <li><strong>empty:</strong> No products found</li>
+            <li><strong>error:</strong> Failed to load products</li>
+        </ul>
+        
+        <h3>✅ Testing Checklist</h3>
+        <ul>
+            <li>✓ Products load on screen open</li>
+            <li>✓ Loading indicator shows during fetch</li>
+            <li>✓ Search updates products in real-time</li>
+            <li>✓ Filters apply correctly</li>
+            <li>✓ Add to cart shows success message</li>
+            <li>✓ Error state displays user-friendly message</li>
+        </ul>
     </div></div>
     <div id="cart-ui-guide" class="modal"><div class="modal-content"><span class="close-btn">&times;</span>
-        <h2>Shopping Cart UI Guide</h2>
-        <p><strong>Assignee:</strong> Manar</p>
-        <p><strong>Goal:</strong> Build the UI for the shopping cart screen.</p>
-        <h4>Steps:</h4><ol><li>Create `cart_screen.dart`.</li><li>Display a list of items, quantity changers, and a total price.</li></ol>
+        <h2>🛒 Shopping Cart UI Guide</h2>
+        <p><strong>Assignee:</strong> Manar | <strong>Estimated Time:</strong> 4-5 hours | <strong>Day:</strong> Wednesday, Oct 21</p>
+        <h3>🎯 Goal</h3>
+        <p>Build an intuitive shopping cart screen with item management and price summary.</p>
+        
+        <h3>📋 Implementation Steps</h3>
+        <ol>
+            <li><strong>Create cart_screen.dart</strong> in <code>lib/presentation/screens/</code></li>
+            <li><strong>Implement Cart Items List:</strong>
+                <ul>
+                    <li>ListView of cart items with dismissible swipe-to-delete</li>
+                    <li>Each item shows: image, name, price, quantity controls</li>
+                </ul>
+            </li>
+            <li><strong>Add Quantity Controls:</strong>
+                <ul>
+                    <li>(-) button to decrease quantity</li>
+                    <li>Current quantity display</li>
+                    <li>(+) button to increase quantity</li>
+                    <li>Delete icon button</li>
+                </ul>
+            </li>
+            <li><strong>Implement Price Summary:</strong>
+                <ul>
+                    <li>Subtotal (sum of all items)</li>
+                    <li>Tax/VAT if applicable</li>
+                    <li>Total (bold, prominent)</li>
+                </ul>
+            </li>
+            <li><strong>Add Action Button:</strong>
+                <ul>
+                    <li>"Proceed to Checkout" button at bottom</li>
+                    <li>Disabled if cart is empty</li>
+                </ul>
+            </li>
+        </ol>
+        
+        <h3>🎨 UI Elements</h3>
+        <ul>
+            <li><strong>Cart Item Card:</strong> Product image, name, price, quantity controls</li>
+            <li><strong>Quantity Controls:</strong> IconButtons with +/- icons</li>
+            <li><strong>Delete Button:</strong> Red delete icon or swipe-to-delete</li>
+            <li><strong>Summary Card:</strong> Card with subtotal, tax, total breakdown</li>
+            <li><strong>Checkout Button:</strong> Full-width elevated button</li>
+            <li><strong>Empty State:</strong> "Your cart is empty" with illustration</li>
+        </ul>
+        
+        <h3>✅ Testing Checklist</h3>
+        <ul>
+            <li>✓ Cart items display correctly</li>
+            <li>✓ Quantity increase/decrease works</li>
+            <li>✓ Swipe-to-delete removes items</li>
+            <li>✓ Total price updates when quantities change</li>
+            <li>✓ Empty cart shows appropriate message</li>
+            <li>✓ Checkout button navigates to checkout screen</li>
+        </ul>
     </div></div>
     <div id="cart-logic-guide" class="modal"><div class="modal-content"><span class="close-btn">&times;</span>
-        <h2>Shopping Cart Logic Guide</h2>
-        <p><strong>Assignee:</strong> Mohamed</p>
-        <p><strong>Goal:</strong> Implement the business logic for the shopping cart.</p>
-        <h4>Steps:</h4><ol><li>Create a `CartBLoC` or `CartNotifier`.</li><li>Implement methods to fetch, update, and remove cart items by calling the `MarketplaceService`.</li></ol>
+        <h2>⚙️ Shopping Cart Logic Guide</h2>
+        <p><strong>Assignee:</strong> Mohamed | <strong>Estimated Time:</strong> 4-5 hours | <strong>Day:</strong> Thursday, Oct 22</p>
+        <h3>🎯 Goal</h3>
+        <p>Implement all business logic for cart operations including quantity management and price calculations.</p>
+        
+        <h3>📋 Implementation Steps</h3>
+        <ol>
+            <li><strong>Create CartBLoC/CartNotifier</strong> in <code>lib/business_logic/</code></li>
+            <li><strong>Implement Cart Methods:</strong>
+                <ul>
+                    <li><code>Future&lt;void&gt; fetchCart()</code> - Load user's cart from Firebase</li>
+                    <li><code>Future&lt;void&gt; updateQuantity(String cartItemId, int newQuantity)</code> - Update item quantity</li>
+                    <li><code>Future&lt;void&gt; removeItem(String cartItemId)</code> - Remove item from cart</li>
+                    <li><code>Future&lt;void&gt; clearCart()</code> - Remove all items</li>
+                </ul>
+            </li>
+            <li><strong>Implement Calculations:</strong>
+                <ul>
+                    <li><code>double calculateSubtotal()</code> - Sum of all item prices</li>
+                    <li><code>double calculateTax()</code> - Tax based on subtotal</li>
+                    <li><code>double calculateTotal()</code> - Subtotal + tax</li>
+                    <li><code>int getTotalItems()</code> - Count of items in cart</li>
+                </ul>
+            </li>
+            <li><strong>Add State Management:</strong>
+                <ul>
+                    <li>loading, loaded, updating, error states</li>
+                    <li>Emit new states on operations</li>
+                    <li>Handle errors gracefully</li>
+                </ul>
+            </li>
+        </ol>
+        
+        <h3>⚙️ Required Functions</h3>
+        <ul>
+            <li><strong>fetchCart():</strong> Get cart from MarketplaceService</li>
+            <li><strong>updateQuantity():</strong> Call service.updateCartItem()</li>
+            <li><strong>removeItem():</strong> Call service.removeFromCart()</li>
+            <li><strong>calculateTotal():</strong> Sum all prices + tax</li>
+            <li><strong>clearCart():</strong> Call service.clearCart()</li>
+        </ul>
+        
+        <h3>✅ Testing Checklist</h3>
+        <ul>
+            <li>✓ Cart loads successfully</li>
+            <li>✓ Quantity updates persist to Firebase</li>
+            <li>✓ Item removal works correctly</li>
+            <li>✓ Price calculations are accurate</li>
+            <li>✓ Cart counter updates in real-time</li>
+            <li>✓ Error handling for failed operations</li>
+        </ul>
     </div></div>
     <div id="checkout-ui-guide" class="modal"><div class="modal-content"><span class="close-btn">&times;</span>
-        <h2>Checkout UI Guide</h2>
-        <p><strong>Assignee:</strong> Manar</p>
-        <p><strong>Goal:</strong> Build the UI for the checkout process.</p>
-        <h4>Steps:</h4><ol><li>Create `checkout_screen.dart`.</li><li>Design forms for shipping address and payment selection.</li></ol>
+        <h2>💳 Checkout UI Guide</h2>
+        <p><strong>Assignee:</strong> Manar | <strong>Estimated Time:</strong> 5-6 hours | <strong>Day:</strong> Friday, Oct 23</p>
+        <h3>🎯 Goal</h3>
+        <p>Build a complete checkout screen with shipping address form and payment method selection.</p>
+        
+        <h3>📋 Implementation Steps</h3>
+        <ol>
+            <li><strong>Create checkout_screen.dart</strong> in <code>lib/presentation/screens/</code></li>
+            <li><strong>Implement Shipping Address Form:</strong>
+                <ul>
+                    <li>TextFields for: Full Name, Address, City, Postal Code, Phone</li>
+                    <li>Form validation for all fields</li>
+                    <li>Option to save address for future orders</li>
+                </ul>
+            </li>
+            <li><strong>Add Payment Method Selection:</strong>
+                <ul>
+                    <li>Radio buttons for payment options</li>
+                    <li>PayPal option (primary)</li>
+                    <li>Credit/Debit Card option</li>
+                    <li>Cash on Delivery option</li>
+                </ul>
+            </li>
+            <li><strong>Display Order Summary:</strong>
+                <ul>
+                    <li>Collapsible list of cart items</li>
+                    <li>Subtotal, tax, total breakdown</li>
+                    <li>Estimated delivery date</li>
+                </ul>
+            </li>
+            <li><strong>Add Confirmation Button:</strong>
+                <ul>
+                    <li>"Place Order" button at bottom</li>
+                    <li>Disabled until form is valid</li>
+                    <li>Shows loading state during processing</li>
+                </ul>
+            </li>
+        </ol>
+        
+        <h3>🎨 UI Elements</h3>
+        <ul>
+            <li><strong>Form Fields:</strong> Outlined TextFormFields with validation</li>
+            <li><strong>Payment Options:</strong> Radio tiles with icons</li>
+            <li><strong>Order Summary:</strong> Expandable card with item list</li>
+            <li><strong>Place Order Button:</strong> Full-width, elevated button</li>
+            <li><strong>Progress Indicator:</strong> Linear progress during payment</li>
+        </ul>
+        
+        <h3>✅ Testing Checklist</h3>
+        <ul>
+            <li>✓ All form fields validate correctly</li>
+            <li>✓ Payment method selection works</li>
+            <li>✓ Order summary shows correct items and total</li>
+            <li>✓ Place Order button disabled until valid</li>
+            <li>✓ Form persists if user navigates away</li>
+            <li>✓ Responsive on different screen sizes</li>
+        </ul>
     </div></div>
     <div id="payment-integration-guide" class="modal"><div class="modal-content"><span class="close-btn">&times;</span>
-        <h2>Payment Integration Guide</h2>
-        <p><strong>Assignee:</strong> Mohamed</p>
-        <p><strong>Goal:</strong> Integrate the PayPal payment gateway.</p>
-        <h4>Packages:</h4><ul><li>`flutter_paypal` or `webview_flutter`</li></ul>
-        <h4>Steps:</h4><ol><li>Use a package or webview to handle the PayPal flow.</li><li>On success, call `createOrder()` in the `MarketplaceService`.</li></ol>
+        <h2>💰 PayPal Payment Integration Guide</h2>
+        <p><strong>Assignee:</strong> Mohamed | <strong>Estimated Time:</strong> 6-8 hours | <strong>Day:</strong> Friday, Oct 23</p>
+        <h3>🎯 Goal</h3>
+        <p>Integrate PayPal payment gateway to process orders securely.</p>
+        
+        <h3>📦 Required Packages</h3>
+        <ul>
+            <li>flutter_paypal_payment (recommended) OR webview_flutter</li>
+            <li>http for API calls</li>
+        </ul>
+        
+        <h3>📋 Implementation Steps</h3>
+        <ol>
+            <li><strong>Setup PayPal Credentials:</strong>
+                <ul>
+                    <li>Get Client ID and Secret from PayPal Developer</li>
+                    <li>Store in environment variables (never hardcode!)</li>
+                    <li>Use Sandbox for testing</li>
+                </ul>
+            </li>
+            <li><strong>Implement Payment Flow:</strong>
+                <ul>
+                    <li>Create PaymentService class</li>
+                    <li>Implement initiatePayment() method</li>
+                    <li>Open PayPal webview or package flow</li>
+                    <li>Handle payment success/failure callbacks</li>
+                </ul>
+            </li>
+            <li><strong>On Payment Success:</strong>
+                <ul>
+                    <li>Get transaction ID from PayPal</li>
+                    <li>Call MarketplaceService.createOrder()</li>
+                    <li>Include transaction ID in order data</li>
+                    <li>Clear cart after successful order</li>
+                    <li>Navigate to order confirmation screen</li>
+                </ul>
+            </li>
+            <li><strong>On Payment Failure:</strong>
+                <ul>
+                    <li>Show error message to user</li>
+                    <li>Log error for debugging</li>
+                    <li>Allow user to retry</li>
+                </ul>
+            </li>
+        </ol>
+        
+        <h3>🔑 Required Setup</h3>
+        <ul>
+            <li><strong>PayPal Developer Account:</strong> Create sandbox account</li>
+            <li><strong>Client ID:</strong> Get from PayPal dashboard</li>
+            <li><strong>Client Secret:</strong> For server-side verification</li>
+            <li><strong>Return URLs:</strong> Success and cancel URLs</li>
+            <li><strong>Webhook URLs:</strong> For payment notifications</li>
+        </ul>
+        
+        <h3>✅ Testing Checklist</h3>
+        <ul>
+            <li>✓ Payment succeeds in sandbox environment</li>
+            <li>✓ Order is created after successful payment</li>
+            <li>✓ Transaction ID is stored with order</li>
+            <li>✓ Cart is cleared after payment</li>
+            <li>✓ Payment errors are handled gracefully</li>
+            <li>✓ User can retry failed payments</li>
+            <li>✓ Receipt/confirmation is shown</li>
+        </ul>
+        
+        <h3>🔗 Dependencies</h3>
+        <p><strong>Required before starting:</strong> Checkout UI, MarketplaceService.createOrder()</p>
+        <p><strong>Blocks:</strong> Order confirmation screen</p>
     </div></div>
 
     <!-- COMMUNITY TASKS -->
